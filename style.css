@@ -1,0 +1,130 @@
+:root {
+    --primary-pink: #FFB6C1;
+    --light-pink: #FFF0F5;
+    --dark-pink: #FF69B4;
+    --text-dark: #333;
+}
+
+body {
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--primary-pink) 0%, var(--dark-pink) 100%);
+    color: white;
+    padding: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.skincare-icon {
+    font-size: 2.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+    margin-bottom: 1.5rem;
+    background: white;
+}
+
+.task-item {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-item:hover {
+    background-color: var(--light-pink);
+}
+
+.task-completed {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+.btn-pink {
+    background-color: var(--primary-pink);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-pink:hover {
+    background-color: var(--dark-pink);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.filter-btn {
+    margin: 0.25rem;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+}
+
+.filter-btn.active {
+    background-color: var(--dark-pink) !important;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 15px;
+}
+
+.status-active { background-color: #28a745; color: white; }
+.status-completed { background-color: #6c757d; color: white; }
+.status-archived { background-color: #ffc107; color: #333; }
+
+.task-actions button {
+    margin: 0 0.25rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+}
+
+.empty-state img {
+    max-width: 150px;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.install-prompt {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    .task-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+}

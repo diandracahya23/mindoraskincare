@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff69b4">
+    <title>Mindora - Skincare Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Quicksand:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe4ec 100%);
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4, .brand-name {
+            font-family: 'Bubblegum Sans', cursive;
+        }
+        
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #fff;
+            border-top: 8px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-size: 28px;
+            color: white !important;
+            font-weight: 700;
+        }
+        
+        .nav-link {
+            color: white !important;
+            margin: 0 10px;
+            transition: transform 0.3s;
+            font-weight: 600;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-3px);
+        }
+        
+        .cart-badge {
+            background: #fff;
+            color: #ff1493;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: slideDown 0.8s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Product Cards */
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative; /* ditambahkan agar badge video bisa diposisikan */
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* badge untuk menandai ada video pada produk */
+        .video-badge {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            pointer-events: none;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .product-title {
+            font-size: 20px;
+            color: #ff1493;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            color: #ff69b4;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Education Section */
+        .edu-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+            border-left: 5px solid #ff69b4;
+        }
+        
+        .edu-icon {
+            font-size: 40px;
+            color: #ff69b4;
+            margin-bottom: 15px;
+        }
+        
+        /* Cart */
+        .cart-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(255, 105, 180, 0.1);
+        }
+        
+        .cart-total {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        /* Modal */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            color: #ff1493;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .badge-pink {
+            background: #ff69b4;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">Mindora ✨</div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">💖 Mindora</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#products">Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#education">Edukasi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showCart()">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cartCount">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>✨ Selamat Datang di Mindora ✨</h1>
+            <p class="lead">Solusi Skincare Terbaik untuk Kulit Sehat dan Bercahaya</p>
+            <button class="btn btn-light btn-lg mt-3" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+                Belanja Sekarang 🛍️
+            </button>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-5">
+        <div class="container">
+            <h2 class="section-title">🌸 Produk Kami 🌸</h2>
+            <div class="row" id="productList">
+                <!-- Products will be inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="py-5">
+        <div class="container">
+            <h2 class="section-title">📚 Edukasi Skincare 📚</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">🧴</div>
+                        <h4>Urutan Pemakaian</h4>
+                        <p>1. Cleanser<br>2. Toner<br>3. Serum<br>4. Moisturizer<br>5. Sunscreen (pagi)</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">☀️</div>
+                        <h4>Pentingnya Sunscreen</h4>
+                        <p>Gunakan sunscreen setiap hari, bahkan saat di dalam ruangan. SPF minimal 30 untuk perlindungan optimal dari UV.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">💧</div>
+                        <h4>Hidrasi Kulit</h4>
+                        <p>Jaga kelembaban kulit dengan minum air 8 gelas/hari dan gunakan moisturizer yang sesuai dengan jenis kulit.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">🌙</div>
+                        <h4>Rutinitas Malam</h4>
+                        <p>Double cleansing di malam hari penting untuk membersihkan makeup dan kotoran. Gunakan retinol atau vitamin C.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">🍃</div>
+                        <h4>Bahan Alami</h4>
+                        <p>Pilih produk dengan bahan alami seperti aloe vera, green tea, dan hyaluronic acid untuk hasil maksimal.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="edu-card">
+                        <div class="edu-icon">⏰</div>
+                        <h4>Konsistensi</h4>
+                        <p>Hasil skincare terlihat setelah 4-6 minggu pemakaian rutin. Jangan mudah berganti produk!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Keranjang Belanja</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems"></div>
+                    <div class="cart-total">
+                        <h4>Total: <span id="cartTotal">Rp 0</span></h4>
+                        <button class="btn btn-light btn-lg w-100 mt-3" onclick="checkout()">
+                            Checkout 💳
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="productModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Mindora - Skincare untuk Semua Kalangan 💖</p>
+            <p>Follow us: <i class="fab fa-instagram"></i> <i class="fab fa-facebook"></i> <i class="fab fa-tiktok"></i></p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: 'Glowing Serum',
+                price: 150000,
+                image: 'gambar1glowingserum.jpg',
+                description: 'Serum pencerah wajah dengan vitamin C dan niacinamide untuk kulit glowing alami.',
+                benefits: ['Mencerahkan kulit', 'Mengurangi noda hitam', 'Melembabkan']
+            },
+            {
+                id: 2,
+                name: 'Hydrating Toner',
+                price: 120000,
+                image: 'gambar2hydrytingserum.jpg',
+                description: 'Toner dengan hyaluronic acid untuk hidrasi maksimal sepanjang hari.',
+                benefits: ['Melembabkan intensif', 'Menyeimbangkan pH', 'Menenangkan kulit']
+            },
+            {
+                id: 3,
+                name: 'Gentle Cleanser',
+                price: 95000,
+                image: 'gambar3gentlecleanser.jpg',
+                description: 'Pembersih wajah lembut dengan formula pH balanced untuk semua jenis kulit.',
+                benefits: ['Membersihkan mendalam', 'Tidak membuat kering', 'Cocok untuk sensitif']
+            },
+            {
+                id: 4,
+                name: 'Night Moisturizer',
+                price: 180000,
+                image: 'gambar4nightcleanser.jpg',
+                description: 'Pelembab malam dengan retinol untuk regenerasi kulit saat tidur.',
+                benefits: ['Anti-aging', 'Meregenerasi sel', 'Melembabkan intensif']
+            },
+            {
+                id: 5,
+                name: 'Sunscreen SPF 50',
+                price: 135000,
+                image: 'gambar5sunscreen.jpg',
+                description: 'Sunscreen ringan SPF 50 PA++++ dengan perlindungan maksimal dari sinar UV.',
+                benefits: ['Melindungi dari UV', 'Tidak lengket', 'Cocok di bawah makeup']
+            },
+            {
+                id: 6,
+                name: 'Acne Treatment',
+                price: 165000,
+                image: 'gambar6acnecream.jpg',   
+                video: 'vidioacne.mp4',     
+                description: 'Treatment jerawat dengan salicylic acid dan tea tree oil untuk kulit berjerawat.',
+                benefits: ['Mengatasi jerawat', 'Mencegah bekas jerawat', 'Mengontrol minyak']
+            }
+        ];
+
+        let cart = [];
+
+        // Initialize
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2000);
+            
+            renderProducts();
+            updateCartCount();
+            registerServiceWorker();
+            createManifest();
+        });
+
+        // Render Products
+        function renderProducts() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = products.map(product => `
+                <div class="col-md-4">
+                    <div class="product-card" onclick="showProductDetail(${product.id})">
+                        <div style="position:relative;">
+                            <img src="${product.image || 'https://via.placeholder.com/400x300?text=No+Image'}" alt="${product.name}" class="product-img">
+                            ${product.video ? `<span class="video-badge"><i class="fas fa-play"></i> Video</span>` : ''}
+                        </div>
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="text-muted">${product.description.substring(0, 60)}...</p>
+                        <div class="product-price">Rp ${product.price.toLocaleString('id-ID')}</div>
+                        <button class="btn btn-primary w-100" onclick="event.stopPropagation(); addToCart(${product.id})">
+                            <i class="fas fa-cart-plus"></i> Tambah ke Keranjang
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show Product Detail
+        function showProductDetail(id) {
+            const product = products.find(p => p.id === id);
+            document.getElementById('productModalTitle').innerHTML = product.name;
+            document.getElementById('productModalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${product.image || 'https://via.placeholder.com/600x400?text=No+Image'}" alt="${product.name}" class="img-fluid rounded">
+                        ${product.video ? `
+                            <video src="${product.video}" controls class="img-fluid rounded mt-3" poster="${product.image || ''}">
+                                Browser Anda tidak mendukung tag video.
+                            </video>
+                        ` : ''}
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-pink mb-3">Rp ${product.price.toLocaleString('id-ID')}</h4>
+                        <p>${product.description}</p>
+                        <h5 class="mt-4">Manfaat:</h5>
+                        <ul>
+                            ${product.benefits.map(b => `<li>${b}</li>`).join('')}
+                        </ul>
+                        <button class="btn btn-primary btn-lg w-100 mt-3" onclick="addToCart(${product.id}); bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();">
+                            <i class="fas fa-cart-plus"></i> Tambah ke Keranjang
+                        </button>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('productModal')).show();
+        }
+
+        // Add to Cart
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+            
+            updateCartCount();
+            showNotification('✅ Produk ditambahkan ke keranjang!');
+        }
+
+        // Update Cart Count
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Show Cart
+        function showCart() {
+            const cartItems = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-center text-muted">Keranjang masih kosong 🛒</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-3">
+                                <img src="${item.image}" alt="${item.name}" class="img-fluid rounded">
+                            </div>
+                            <div class="col-5">
+                                <h6>${item.name}</h6>
+                                <p class="text-muted mb-0">Rp ${item.price.toLocaleString('id-ID')}</p>
+                            </div>
+                            <div class="col-2">
+                                <div class="input-group input-group-sm">
+                                    <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                    <input type="text" class="form-control text-center" value="${item.quantity}" readonly>
+                                    <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="col-2 text-end">
+                                <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cartTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            
+            new bootstrap.Modal(document.getElementById('cartModal')).show();
+        }
+
+        // Update Quantity
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(id);
+                } else {
+                    showCart();
+                    updateCartCount();
+                }
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            showCart();
+            updateCartCount();
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('❌ Keranjang masih kosong!');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const confirmed = confirm(`Total pembayaran: Rp ${total.toLocaleString('id-ID')}\n\nLanjutkan ke pembayaran?`);
+            
+            if (confirmed) {
+                showNotification('✅ Pesanan berhasil! Terima kasih telah berbelanja 💖');
+                cart = [];
+                updateCartCount();
+                bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+            }
+        }
+
+        // Show Notification
+        function showNotification(message) {
+            alert(message);
+        }
+
+        // Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(
+                            caches.open('mindora-v1').then((cache) => {
+                                return cache.addAll(['/']);
+                            })
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then((response) => {
+                                return response || fetch(e.request);
+                            })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl).then(() => {
+                    console.log('Service Worker registered');
+                });
+            }
+        }
+
+        // Create Manifest
+        function createManifest() {
+            const manifest = {
+                name: 'Mindora Skincare',
+                short_name: 'Mindora',
+                description: 'Aplikasi penjualan dan edukasi skincare',
+                start_url: '/',
+                display: 'standalone',
+                background_color: '#ff69b4',
+                theme_color: '#ff69b4',
+                icons: [
+                    {
+                        src: 'https://cdn-icons-png.flaticon.com/512/2553/2553642.png',
+                        sizes: '192x192',
+                        type: 'image/png'
+                    }
+                ]
+            };
+            
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestURL = URL.createObjectURL(blob);
+            document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+        }
+    </script>
+</body>
+</html>
